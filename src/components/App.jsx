@@ -4,6 +4,8 @@ import ContactList from "./ContactList";
 import Filter from "./Filter";
 import Notification from "./Notification";
 
+const LS_KEY = 'contacts'
+
 export class App extends Component {
   state = {
     contacts: [
@@ -13,6 +15,28 @@ export class App extends Component {
       {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
     ],
     filter: ''
+  }
+
+  componentDidMount() {
+    const storedContacts = localStorage.getItem(LS_KEY)
+
+    if (!storedContacts) {
+      return
+    }
+    
+    const contacts = JSON.parse(storedContacts)
+    this.setState({contacts})
+  }
+
+  componentDidUpdate(_, prevState) {
+    const prevContacts = prevState.contacts
+    const currentContacts = this.state.contacts
+    
+    if (prevContacts.length === currentContacts.length) {
+      return
+    }
+
+    localStorage.setItem(LS_KEY, JSON.stringify(currentContacts))
   }
 
   addContact = contact => {
